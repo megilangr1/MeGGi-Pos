@@ -5,6 +5,7 @@ use App\Http\Livewire\Kategori\MainIndex;
 use App\Http\Livewire\MasterData\BarangMainIndex;
 use App\Http\Livewire\MasterData\CustomerMainIndex;
 use App\Http\Livewire\MasterData\JenisMainIndex;
+use App\Http\Livewire\MasterData\RlsBarangSupplier;
 use App\Http\Livewire\MasterData\SatuanMainIndex;
 use App\Http\Livewire\MasterData\SupplierMainIndex;
 use Illuminate\Support\Facades\Route;
@@ -34,6 +35,8 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/supplier', SupplierMainIndex::class)->name('master-supplier');
             Route::get('/customer', CustomerMainIndex::class)->name('master-customer');
         });
+
+        Route::get('/relasi-barang-supplier', RlsBarangSupplier::class)->name('relasi-barang-supplier');
     });
 });
 
