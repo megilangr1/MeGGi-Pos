@@ -35,4 +35,9 @@ class Barang extends Model
     {
         return $this->belongsTo(Satuan::class, 'FK_SAT', 'FK_SAT');
     }
+
+    public function relasiSupplier()
+    {
+        return $this->hasMany(RelasiBarangSupplier::class, 'FK_BRG', 'FK_BRG');
+    }
 }

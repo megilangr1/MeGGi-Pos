@@ -58,6 +58,13 @@
       </a>
     </li>
 
+    <li class="nav-item">
+      <a href="{{ route('backend.purchase-order.index') }}" class="nav-link">
+        <i class="fas fa-truck nav-icon"></i>
+        <p>Purchase Order</p>
+      </a>
+    </li>
+
     {{-- <li class="nav-item {{ (request()->is('akun*')) || (request()->is('roles*')) ? 'menu-open' : '' }}">
       <a href="#" class="nav-link {{ (request()->is('akun*')) || (request()->is('roles*')) ? 'active' : '' }}">
         <i class="nav-icon fas fa-users text-secondary"></i>

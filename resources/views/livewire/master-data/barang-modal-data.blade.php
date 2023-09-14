@@ -5,7 +5,7 @@
         <div class="modal-header">
           <h4 class="modal-title" wire:click="$refresh">
             <span class="fa fa-table mr-3"></span>
-            Daftar Data Supplier
+            Daftar Data Barang
           </h4>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
@@ -18,7 +18,7 @@
                 <thead>
                   <tr>
                     <th class="align-middle px-2 py-2 text-center" width="10%">Kode</th>
-                    <th class="align-middle px-2 py-2">Nama Supplier</th>
+                    <th class="align-middle px-2 py-2">Nama Barang</th>
                     <th class="align-middle px-2 py-2">Jenis</th>
                     <th class="align-middle px-2 py-2">Satuan</th>
                     <th class="align-middle px-2 py-2 text-center" width="15%">Aksi</th>
@@ -40,7 +40,7 @@
                     </tr>
                   @empty
                     <tr>
-                      <td colspan="3" class="align-middle px-2 py-2 text-center">Belum Ada Supplier.</td>
+                      <td colspan="5" class="align-middle px-2 py-2 text-center">Belum Ada Barang.</td>
                     </tr>
                   @endforelse
                 </tbody>

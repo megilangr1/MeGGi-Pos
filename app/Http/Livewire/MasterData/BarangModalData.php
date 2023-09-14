@@ -12,6 +12,7 @@ class BarangModalData extends Component
     protected $paginationTheme = 'bootstrap';
 
     public $source = null;
+    public $supplier = null;
 
     protected $listeners = [
         'openModalBarang'
@@ -20,6 +21,12 @@ class BarangModalData extends Component
     public function render()
     {
         $getData = new Barang();
+
+        if ($this->supplier != null) {
+            $getData = $getData->whereHas('relasiSupplier', function($q) {
+                $q->where('FK_SUP', '=', $this->supplier);
+            });
+        }
 
         $getData = $getData->orderBy('FK_BRG', 'ASC')->paginate(10);
 
@@ -34,6 +41,8 @@ class BarangModalData extends Component
 
         $this->source = $data['source'] ?? null;
         $showProps = $data['showProps'] ?? 'hide';
+
+        $this->supplier = $data['FK_SUP'] ?? null;
 
         $this->emit('modal-barang', $showProps);
     }

@@ -1,13 +1,14 @@
 <?php
 
 use App\Http\Controllers\MainController;
-use App\Http\Livewire\Kategori\MainIndex;
 use App\Http\Livewire\MasterData\BarangMainIndex;
 use App\Http\Livewire\MasterData\CustomerMainIndex;
 use App\Http\Livewire\MasterData\JenisMainIndex;
 use App\Http\Livewire\MasterData\RlsBarangSupplier;
 use App\Http\Livewire\MasterData\SatuanMainIndex;
 use App\Http\Livewire\MasterData\SupplierMainIndex;
+use App\Http\Livewire\PurchaseOrder\MainIndex as PoMainIndex;
+use App\Http\Livewire\PurchaseOrder\MainForm as PoMainForm;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -37,6 +38,12 @@ Route::middleware(['auth'])->group(function () {
         });
 
         Route::get('/relasi-barang-supplier', RlsBarangSupplier::class)->name('relasi-barang-supplier');
+
+        Route::prefix('/purchase-order')->name('purchase-order.')->group(function () {
+            Route::get('/', PoMainIndex::class)->name('index');
+            Route::get('/create', PoMainForm::class)->name('create');
+        });
+
     });
 });
 
