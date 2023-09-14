@@ -23,6 +23,7 @@ class BarangModalData extends Component
         $getData = new Barang();
 
         if ($this->supplier != null) {
+            $getData = $getData->with('relasiSupplier');
             $getData = $getData->whereHas('relasiSupplier', function($q) {
                 $q->where('FK_SUP', '=', $this->supplier);
             });

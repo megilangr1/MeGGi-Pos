@@ -38,6 +38,6 @@ class Barang extends Model
 
     public function relasiSupplier()
     {
-        return $this->hasMany(RelasiBarangSupplier::class, 'FK_BRG', 'FK_BRG');
+        return $this->hasOne(RelasiBarangSupplier::class, 'FK_BRG', 'FK_BRG');
     }
 }
