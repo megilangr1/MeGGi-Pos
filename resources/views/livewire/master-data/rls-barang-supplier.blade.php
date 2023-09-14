@@ -105,6 +105,64 @@
         </div>
       </div>
     </div>
+
+    <div class="col-12">
+      <div class="card card-outline card-primary">
+        <div class="card-header">
+          <h4 class="card-title">
+            <span class="fa fa-table mr-3"></span>
+            Daftar Barang Relasi Supplier
+          </h4>
+        </div>
+        <div class="card-body p-0 table-responsive">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th class="align-middle px-2 py-2 text-center">No.</th>
+                <th class="align-middle px-2 py-2 text-center">Kode Barang</th>
+                <th class="align-middle px-2 py-2 text-center">Nama Barang Pada Supplier</th>
+                <th class="align-middle px-2 py-2 text-center">Harga Barang Pada Supplier</th>
+                <th class="align-middle px-2 py-2 text-center">Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              @forelse ($dataRelasi as $item)
+                <tr>
+                  <td class="align-middle px-2 py-1 text-center">
+                    {{ ($dataRelasi->currentpage()-1) * $dataRelasi->perpage() + $loop->index + 1 }}.
+                  </td>
+                  <td class="align-middle px-2 py-1 text-center">{{ $item->FK_BRG }}</td>
+                  <td class="align-middle px-2 py-1 text-center">{{ $item->FN_BRG_SUP }}</td>
+                  <td class="align-middle px-2 py-1 text-center">{{ $item->FHARGA_AKHIR }}</td>
+                  <td class="align-middle px-2 py-1 text-center">
+                    <div class="btn-group">
+                      <button class="btn btn-xs btn-warning px-3" wire:click="editRelasi('{{ $item->FKD_RLS }}')">
+                        <span class="fa fa-edit"></span>
+                      </button>
+                      <button class="btn btn-xs btn-danger px-3" wire:click="deleteRelasi('{{ $item->FKD_RLS }}')">
+                        <span class="fa fa-trash"></span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              @empty
+                <tr>
+                  <td colspan="5">Belum Ada Data Barang</td>
+                </tr>
+              @endforelse
+            </tbody>
+          </table>
+        </div>
+        <div class="card-footer">
+          <div class="float-right">
+            @if ($dataRelasi != null)
+              {{ $dataRelasi->links() }}
+            @endif
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   @livewire('master-data.supplier-modal-data')

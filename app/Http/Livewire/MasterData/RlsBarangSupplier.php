@@ -7,9 +7,12 @@ use App\Models\RelasiBarangSupplier;
 use App\Models\Supplier;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class RlsBarangSupplier extends Component
 {
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
 
     public $supplier = [];
     public $barang = [];
@@ -35,7 +38,17 @@ class RlsBarangSupplier extends Component
 
     public function render()
     {
-        return view('livewire.master-data.rls-barang-supplier');
+        $getData = [];
+        if ($this->supplier != null) {
+            $getData = new RelasiBarangSupplier();
+
+            $getData = $getData->where('FK_SUP', '=', $this->supplier['FK_SUP']);
+            $getData = $getData->orderBy('created_at', 'DESC')->paginate(5);
+        } 
+
+        return view('livewire.master-data.rls-barang-supplier', [
+            'dataRelasi' => $getData
+        ]);
     }
 
     public function openModalSupplier()
@@ -135,17 +148,32 @@ class RlsBarangSupplier extends Component
 
         DB::beginTransaction();
         try {
+            $checkRelasi = RelasiBarangSupplier::onlyTrashed()
+                ->where('FK_SUP', '=', $this->supplier['FK_SUP'])
+                ->where('FK_BRG', '=', $this->barang['FK_BRG'])
+                ->first();
+
             $getSupplier = Supplier::where('FK_SUP', '=', $this->supplier['FK_SUP'])->firstOrFail();
             $getBarang = Barang::where('FK_BRG', '=', $this->barang['FK_BRG'])->firstOrFail();
 
-            $createData = RelasiBarangSupplier::create([
-                'FKD_RLS' => $getSupplier->FK_SUP . $getBarang->FK_BRG,
-                'FK_SUP' => $getSupplier->FK_SUP,
-                'FK_BRG' => $getBarang->FK_BRG,
-                'FN_BRG_SUP' => trim($this->state['FN_BRG_SUP']),
-                'FHARGA_AKHIR' => trim($this->state['FHARGA_AKHIR']),
-            ]);
+            if ($checkRelasi != null) {
+                $restoreData = $checkRelasi->restore();
 
+                $updateData = $checkRelasi->update([
+                    'FK_BRG' => $getBarang->FK_BRG,
+                    'FN_BRG_SUP' => trim($this->state['FN_BRG_SUP']),
+                    'FHARGA_AKHIR' => trim($this->state['FHARGA_AKHIR']),
+                ]);
+            } else {
+                $createData = RelasiBarangSupplier::create([
+                    'FKD_RLS' => $getSupplier->FK_SUP . $getBarang->FK_BRG,
+                    'FK_SUP' => $getSupplier->FK_SUP,
+                    'FK_BRG' => $getBarang->FK_BRG,
+                    'FN_BRG_SUP' => trim($this->state['FN_BRG_SUP']),
+                    'FHARGA_AKHIR' => trim($this->state['FHARGA_AKHIR']),
+                ]);
+            }
+            
             DB::commit();
             $this->emit('success', 'Data Relasi di-Tambahkan !');
 
@@ -194,6 +222,37 @@ class RlsBarangSupplier extends Component
 
         } catch (\Exception $e) {
             DB::rollBack();
+            dd($e);
+        }
+    }
+
+    public function deleteRelasi($id)
+    {
+        DB::beginTransaction();
+        try {
+            $getData = RelasiBarangSupplier::where('FKD_RLS', '=', $id)->firstOrFail();
+            $deleteData = $getData->delete();
+
+            DB::commit();
+            $this->emit('warning', 'Data di-Hapus !');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $this->emit('error', 'Terjadi Kesalahan ! <br> Silahkan Hubungi Administrator !');
+            dd($e);
+        }
+    }
+
+    public function editRelasi($id)
+    {
+        try {
+            $getData = RelasiBarangSupplier::with('barang')
+                ->whereHas('barang')
+                ->where('FKD_RLS', '=', $id)
+                ->firstOrFail();
+
+            $this->selectedBarang($getData->barang->toArray());
+        } catch (\Exception $e) {
+            $this->emit('error', 'Terjadi Kesalahan ! <br> Silahkan Hubungi Administrator !');
             dd($e);
         }
     }

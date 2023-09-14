@@ -20,4 +20,9 @@ class RelasiBarangSupplier extends Model
         'FN_BRG_SUP',
         'FHARGA_AKHIR',
     ];
+
+    public function barang()
+    {
+        return $this->belongsTo(Barang::class, 'FK_BRG', 'FK_BRG');
+    }
 }
