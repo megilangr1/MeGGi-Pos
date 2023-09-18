@@ -17,7 +17,7 @@ class CreatePurchaseOrdersTable extends Migration
             $table->string('FNO_PO');
             $table->date('FTGL_PO');
             $table->string('FK_SUP');
-            $table->string('FKET');
+            $table->string('FKET')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

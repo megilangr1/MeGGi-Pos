@@ -48,10 +48,20 @@ class BarangModalData extends Component
         $this->emit('modal-barang', $showProps);
     }
 
-    public function pilihSupplier($id)
+    public function pilihBarang($id)
     {
         try {
-            $getData = Barang::where('FK_BRG', '=', $id)->firstOrFail();
+            $getData = new Barang();
+
+            if ($this->supplier != null) {
+                $getData = $getData->with([
+                    'relasiSupplier',
+                    'satuan',
+                ])->whereHas('relasiSupplier')
+                    ->whereHas('satuan');
+            }
+
+            $getData = $getData->where('FK_BRG', '=', $id)->firstOrFail();
 
             if ($this->source != null) {
                 $this->emitTo($this->source, 'selectedBarang', $getData->toArray());

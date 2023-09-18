@@ -19,4 +19,14 @@ class PurchaseOrder extends Model
         'FK_SUP',
         'FKET',
     ];
+
+    public function detail()
+    {
+        return $this->hasMany(PurchaseOrderDetail::class, 'FNO_PO', 'FNO_PO');
+    }
+
+    public function supplier()
+    {
+        return $this->belongsTo(Supplier::class, 'FK_SUP', 'FK_SUP');
+    }
 }

@@ -14,8 +14,13 @@ class MainIndex extends Component
 
     public function render()
     {
-        $getData = PurchaseOrder::orderBy('FNO_PO', 'ASC')->paginate(10);
+        $getData = new PurchaseOrder();
+        $getData = $getData->with([
+            'supplier'
+        ]);
+        $getData = $getData->withCount('detail');
 
+        $getData = $getData->orderBy('FNO_PO', 'ASC')->paginate(10);
         return view('livewire.purchase-order.main-index', [
             'dataPo' => $getData
         ]);
@@ -25,7 +30,7 @@ class MainIndex extends Component
     {
         DB::beginTransaction();
         try {
-            $getData = PurchaseOrder::where('FK_JENIS', '=', $id)->firstOrFail();
+            $getData = PurchaseOrder::where('FNO_PO', '=', $id)->firstOrFail();
             $deleteData = $getData->delete();
 
             DB::commit();

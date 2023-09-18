@@ -15,35 +15,69 @@
           <div class="row">
             <div class="col-12 table-responsive">
               <table class="table table-bordered mb-0">
-                <thead>
-                  <tr>
-                    <th class="align-middle px-2 py-2 text-center" width="10%">Kode</th>
-                    <th class="align-middle px-2 py-2">Nama Barang</th>
-                    <th class="align-middle px-2 py-2">Jenis</th>
-                    <th class="align-middle px-2 py-2">Satuan</th>
-                    <th class="align-middle px-2 py-2 text-center" width="15%">Aksi</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  @forelse ($dataBarang as $item)
+                @if ($supplier != null)
+                  <thead>
                     <tr>
-                      <td class="align-middle px-2 py-1 text-center font-weight-bold">{{ $item->FK_BRG }}</td>
-                      <td class="align-middle px-2 py-1">{{ $item->FN_BRG }}</td>
-                      <td class="align-middle px-2 py-1">{{ $item->jenis->FN_JENIS }}</td>
-                      <td class="align-middle px-2 py-1">{{ $item->satuan->FN_SAT }}</td>
-                      <td class="align-middle px-2 py-1 text-center">
-                        <button class="btn btn-xs btn-success px-3" wire:click="pilihSupplier('{{ $item->FK_BRG }}')">
-                          <span class="fa fa-check mr-2"></span>
-                          Pilih Data
-                        </button>
-                      </td>
+                      <th class="align-middle px-2 py-2 text-center" width="10%">Kode</th>
+                      <th class="align-middle px-2 py-2">Nama Barang (Pada Supplier)</th>
+                      <th class="align-middle px-2 py-2">Jenis</th>
+                      <th class="align-middle px-2 py-2">Satuan</th>
+                      <th class="align-middle px-2 py-2 text-center">Harga</th>
+                      <th class="align-middle px-2 py-2 text-center" width="15%">Aksi</th>
                     </tr>
-                  @empty
+                  </thead>
+                  <tbody>
+                    @forelse ($dataBarang as $item)
+                      <tr>
+                        <td class="align-middle px-2 py-1 text-center font-weight-bold">{{ $item->FK_BRG }}</td>
+                        <td class="align-middle px-2 py-1">{{ $item->FN_BRG . ' (' . $item->relasiSupplier->FN_BRG_SUP . ')' }}</td>
+                        <td class="align-middle px-2 py-1">{{ $item->jenis->FN_JENIS }}</td>
+                        <td class="align-middle px-2 py-1">{{ $item->satuan->FN_SAT }}</td>
+                        <td class="align-middle px-2 py-1 text-center">Rp. {{ number_format((double) $item->relasiSupplier->FHARGA_AKHIR, 0, ',', '.') }}</td>
+                        <td class="align-middle px-2 py-1 text-center">
+                          <button class="btn btn-xs btn-success px-3" wire:click="pilihBarang('{{ $item->FK_BRG }}')">
+                            <span class="fa fa-check mr-2"></span>
+                            Pilih Data
+                          </button>
+                        </td>
+                      </tr>
+                    @empty
+                      <tr>
+                        <td colspan="6" class="align-middle px-2 py-2 text-center">Belum Ada Barang.</td>
+                      </tr>
+                    @endforelse
+                  </tbody>
+                @else
+                  <thead>
                     <tr>
-                      <td colspan="5" class="align-middle px-2 py-2 text-center">Belum Ada Barang.</td>
+                      <th class="align-middle px-2 py-2 text-center" width="10%">Kode</th>
+                      <th class="align-middle px-2 py-2">Nama Barang</th>
+                      <th class="align-middle px-2 py-2">Jenis</th>
+                      <th class="align-middle px-2 py-2">Satuan</th>
+                      <th class="align-middle px-2 py-2 text-center" width="15%">Aksi</th>
                     </tr>
-                  @endforelse
-                </tbody>
+                  </thead>
+                  <tbody>
+                    @forelse ($dataBarang as $item)
+                      <tr>
+                        <td class="align-middle px-2 py-1 text-center font-weight-bold">{{ $item->FK_BRG }}</td>
+                        <td class="align-middle px-2 py-1">{{ $item->FN_BRG }}</td>
+                        <td class="align-middle px-2 py-1">{{ $item->jenis->FN_JENIS }}</td>
+                        <td class="align-middle px-2 py-1">{{ $item->satuan->FN_SAT }}</td>
+                        <td class="align-middle px-2 py-1 text-center">
+                          <button class="btn btn-xs btn-success px-3" wire:click="pilihSupplier('{{ $item->FK_BRG }}')">
+                            <span class="fa fa-check mr-2"></span>
+                            Pilih Data
+                          </button>
+                        </td>
+                      </tr>
+                    @empty
+                      <tr>
+                        <td colspan="5" class="align-middle px-2 py-2 text-center">Belum Ada Barang.</td>
+                      </tr>
+                    @endforelse
+                  </tbody>
+                @endif
               </table>
             </div>
           </div>
