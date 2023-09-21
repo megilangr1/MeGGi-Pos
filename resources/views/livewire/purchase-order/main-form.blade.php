@@ -5,7 +5,7 @@
         <div class="card-header">
           <h4 class="card-title">
             <span class="fa fa-truck mr-3 text-sm text-primary"></span>
-            Buat Data Pemesanan
+            {{ $po != null ? 'Edit' : 'Buat' }} Data Pemesanan
           </h4>
 
           <div class="card-tools">
@@ -153,16 +153,16 @@
         <div class="card-footer">
           <div class="row">
             <div class="col-md-4">
-              <button class="btn btn-sm btn-block btn-success" wire:click="dummy">
+              <button class="btn btn-sm btn-block btn-success" wire:click="{{ $po != null ? 'updateData' : 'createData' }}">
                 <span class="fa fa-check mr-2"></span>
-                Buat Data Pemesanan
+                {{ $po != null ? 'Ubah' : 'Buat' }} Data Pemesanan
               </button>
             </div>
             <div class="col-md-4">
-              <button class="btn btn-sm btn-block btn-danger">
+              <a href="{{ route('backend.purchase-order.index') }}" class="btn btn-sm btn-block btn-danger">
                 <span class="fa fa-times mr-2"></span>
-                Batalkan Pembuatan Data
-              </button>
+                Batalkan {{ $po != null ? 'Ubah' : 'Pembuatan' }} Data
+              </a>
             </div>
           </div>
         </div>

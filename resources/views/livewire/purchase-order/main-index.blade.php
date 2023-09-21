@@ -24,7 +24,7 @@
                 <th class="align-middle px-2 py-2 text-center">Nomor Pemesanan</th>
                 <th class="align-middle px-2 py-2 text-center">Supplier</th>
                 <th class="align-middle px-2 py-2 text-center">Keterangan</th>
-                <th class="align-middle px-2 py-2 text-center">Aksi</th>
+                <th class="align-middle px-2 py-2 text-center" width="10%">Aksi</th>
               </tr>
             </thead>
             <tbody>
@@ -38,9 +38,12 @@
                   <td class="align-middle px-2 py-1 text-center">{{ $item->FKET != null ? $item->FKET : 'Tidak Ada Keterangan' }}</td>
                   <td class="align-middle px-2 py-1 text-center">
                     <div class="btn-group">
-                      <button class="btn btn-xs btn-warning px-3" wire:click="editData('{{ $item->FNO_PO }}')">
+                      <a href="{{ route('backend.purchase-order.print', $item->FNO_PO) }}" class="btn btn-xs btn-success px-3">
+                        <span class="fa fa-print"></span>
+                      </a>
+                      <a href="{{ route('backend.purchase-order.edit', $item->FNO_PO) }}" class="btn btn-xs btn-warning px-3">
                         <span class="fa fa-edit"></span>
-                      </button>
+                      </a>
                       <button class="btn btn-xs btn-danger px-3" wire:click="deleteData('{{ $item->FNO_PO }}')">
                         <span class="fa fa-trash"></span>
                       </button>

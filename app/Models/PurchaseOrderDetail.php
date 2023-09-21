@@ -20,4 +20,9 @@ class PurchaseOrderDetail extends Model
         'FHARGA',
         'FQ_PO',
     ];
+
+    public function relasi_supplier()
+    {
+        return $this->belongsTo(RelasiBarangSupplier::class, 'FKD_RLS', 'FKD_RLS');
+    }
 }
