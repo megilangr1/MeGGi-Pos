@@ -65,7 +65,7 @@
                         <td class="align-middle px-2 py-1">{{ $item->jenis->FN_JENIS }}</td>
                         <td class="align-middle px-2 py-1">{{ $item->satuan->FN_SAT }}</td>
                         <td class="align-middle px-2 py-1 text-center">
-                          <button class="btn btn-xs btn-success px-3" wire:click="pilihSupplier('{{ $item->FK_BRG }}')">
+                          <button class="btn btn-xs btn-success px-3" wire:click="pilihBarang('{{ $item->FK_BRG }}')">
                             <span class="fa fa-check mr-2"></span>
                             Pilih Data
                           </button>

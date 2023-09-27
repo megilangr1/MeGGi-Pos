@@ -35,7 +35,6 @@ class MainIndex extends Component
 
             DB::commit();
             $this->emit('warning', 'Data di-Hapus !');
-            $this->showForm(false);
         } catch (\Exception $e) {
             DB::rollBack();
             $this->emit('error', 'Terjadi Kesalahan ! <br> Silahkan Hubungi Administrator !');

@@ -42,6 +42,7 @@ Route::middleware(['auth'])->group(function () {
         Route::prefix('/purchase-order')->name('purchase-order.')->group(function () {
             Route::get('/', PoMainIndex::class)->name('index');
             Route::get('/create', PoMainForm::class)->name('create');
+            Route::get('/edit/{id}', PoMainForm::class)->name('edit');
         });
 
     });

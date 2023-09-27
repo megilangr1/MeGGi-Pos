@@ -49,7 +49,7 @@
                 </tr>
               @empty
                 <tr>
-                  <td class="align-middle text-center" colspan="4">Belum Ada Data Jenis</td>
+                  <td class="align-middle text-center" colspan="5">Belum Ada Data Jenis</td>
                 </tr>
               @endforelse
             </tbody>
