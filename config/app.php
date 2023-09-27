@@ -178,6 +178,7 @@ return [
         App\Providers\FortifyServiceProvider::class,
         App\Providers\JetstreamServiceProvider::class,
 
+        Barryvdh\DomPDF\ServiceProvider::class,
     ],
 
     /*
@@ -233,6 +234,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+        'Pdf' => Barryvdh\DomPDF\Facade::class,
     ],
 
 ];

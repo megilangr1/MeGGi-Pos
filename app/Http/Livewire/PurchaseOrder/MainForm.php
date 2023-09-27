@@ -10,8 +10,9 @@ use Livewire\Component;
 
 class MainForm extends Component
 {
+    public $po = [];
+
     public $supplier = [];
-    public $barang = [];
 
     public $state = [];
     public $params = [
@@ -62,9 +63,49 @@ class MainForm extends Component
         $this->state['TOTAL_PO'] = array_sum(array_column($this->state['PO_BRG'], 'FSUB_TOTAL'));
     }
 
-    public function mount()
+    public function mount($id = null)
     {
         $this->state = $this->params;
+        if ($id != null) {
+            try {
+                $getData = PurchaseOrder::with([
+                    'detail',
+                    'supplier',
+                    'detail.relasi_supplier',
+                    'detail.relasi_supplier.barang',
+                    'detail.relasi_supplier.barang.satuan'
+                ])->where('FNO_PO', '=', $id)->firstOrFail();
+
+                $this->po = $getData->toArray();
+                $this->supplier = $getData->supplier->toArray();
+
+                $this->state['FNO_PO'] = $getData->FNO_PO;
+                $this->state['FTGL_PO'] = date('Y-m-d', strtotime($getData->FTGL_PO));
+                $this->state['FK_SUP'] = $getData->FK_SUP;
+                $this->state['TEXT_SUP'] = $getData->FK_SUP . ' - ' . $getData->FNA_SUP . ' | ' . ($getData->FNOTELP != null ? $getData->FNOTELP:'-') . ' | ' . ($getData->FCONTACT != null ? $getData->FCONTACT:'-');
+                $this->state['FKET'] = $getData->FKET;
+                $this->state['TOTAL_PO'] = 0;
+
+                foreach ($getData->detail as $key => $value) {
+                    $subTotal = (double) $value->FHARGA * (double) $value->FQ_PO;
+                    $this->state['TOTAL_PO'] += $subTotal;
+
+                    $this->state['PO_BRG'][$value->FKD_RLS] = [
+                        'FKD_RLS' => $value->relasi_supplier->FKD_RLS,
+                        'FN_BRG' => $value->relasi_supplier->barang->FN_BRG,
+                        'FN_BRG_SUP' => $value->relasi_supplier->FN_BRG_SUP,
+                        'FN_SAT' => $value->relasi_supplier->barang->satuan->FN_SAT,
+
+                        'FQ_PO' => $value->FQ_PO,
+                        'FHARGA' => $value->FHARGA,
+                        'FSUB_TOTAL' => $subTotal,
+                    ];
+                }
+            } catch (\Exception $e) {
+                abort(404);
+                dd($e);
+            }
+        }
     }
 
     public function render()
@@ -142,7 +183,7 @@ class MainForm extends Component
         }
     }
 
-    public function dummy()
+    public function createData()
     {
         $this->validate([
             'state.FNO_PO' => 'required|string|unique:purchase_orders,FNO_PO',
@@ -181,7 +222,69 @@ class MainForm extends Component
             }
 
             DB::commit();
-            $this->emit('success', 'Data Pemesanan Barang di-Buat !');
+            // $this->emit('success', 'Data Pemesanan Barang di-Buat !');
+            session()->flash('success', 'Data Pemesanan Barang di-Buat !');
+            return redirect(route('backend.purchase-order.index'));
+        } catch (\Exception $e) {
+            DB::rollback();
+            dd($e);
+        }
+    }
+
+    public function updateData()
+    {
+        $this->validate([
+            'state.FNO_PO' => 'required|string|unique:purchase_orders,FNO_PO,' . $this->po['FNO_PO'] . ',FNO_PO',
+            'state.FTGL_PO' => 'required|date',
+            'state.FK_SUP' => 'required|exists:suppliers,FK_SUP',
+            'state.FKET' => 'nullable|string',
+
+            'state.PO_BRG' => 'required|array',
+        ], [
+            'required' => 'Data / Input Tidak Boleh Kosong !',
+            'string' => 'Input Harus Berupa Alphanumerik !',
+            'exists' => 'Data Tidak Valid ! Silahkan Pilih Ulang Data !',
+            'array' => 'Data Tidak Valid ! Silahkan Refresh Ulang Halaman !',
+            'unique' => 'Kode Dengan Input Tersebut Sudah Ada !',
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $getSupplier = Supplier::where('FK_SUP', '=', $this->state['FK_SUP'])->firstOrFail();
+            $getPo = PurchaseOrder::where('FNO_PO', '=', $this->po['FNO_PO'])->firstOrFail();
+
+            $updateHeader = $getPo->update([
+                'FNO_PO' => $this->state['FNO_PO'],
+                'FTGL_PO' => $this->state['FTGL_PO'],
+                'FK_SUP' => $this->state['FK_SUP'],
+                'FKET' => $this->state['FKET'],
+            ]);
+
+            $deleteDetail = $getPo->detail()->delete();
+            foreach ($this->state['PO_BRG'] as $key => $value) {
+                $checkDetail = PurchaseOrderDetail::onlyTrashed()->where('FNO_REF', '=', $getPo->FNO_PO . '-' . $key)->first();
+                if ($checkDetail != null) {
+                    $restoreDeleted = $checkDetail->restore();
+                    $updateDetail = $checkDetail->update([
+                        'FNO_PO' => $getPo->FNO_PO,
+                        'FKD_RLS' => $key,
+                        'FHARGA' => $value['FHARGA'],
+                        'FQ_PO' => $value['FQ_PO'],
+                    ]);
+                } else {
+                    $createDetail = PurchaseOrderDetail::create([
+                        'FNO_REF' => $getPo->FNO_PO . '-' . $key,
+                        'FNO_PO' => $getPo->FNO_PO,
+                        'FKD_RLS' => $key,
+                        'FHARGA' => $value['FHARGA'],
+                        'FQ_PO' => $value['FQ_PO'],
+                    ]);
+                }
+            }
+
+            DB::commit();
+            // $this->emit('success', 'Data Pemesanan Barang di-Buat !');
+            session()->flash('info', 'Data Pemesanan Barang di-Ubah !');
             return redirect(route('backend.purchase-order.index'));
         } catch (\Exception $e) {
             DB::rollback();
